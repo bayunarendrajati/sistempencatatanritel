@@ -35,4 +35,4 @@ Sistem juga dapat disematkan dengan menggunakan ```HTML iFrame``` atau **Google 
 
 ## Catatan
 
-Repository sistem pencatatan dapat diakses pada 
+Repository sistem pencatatan dapat diakses pada https://github.com/bayunarendrajati/sistempencatatanritel
