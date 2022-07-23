@@ -1,0 +1,716 @@
+<script>
+  document.getElementById("switchTypeButton").addEventListener("click",() => {
+    evaluationType = document.getElementById("evaluationType");
+    switchButtonText = document.getElementById("switchButtonText");
+    sales = document.getElementById("penjualan");
+    purchase = document.getElementById("pembelian");
+    if (evaluationType.innerHTML === "PENJUALAN") {
+      switchButtonText.innerHTML = "CATAT PENJUALAN";
+      evaluationType.innerHTML = "PEMBELIAN";
+      purchase.style.display = "inline-block";
+      sales.style.display = "none";
+    } else {
+      switchButtonText.innerHTML = "CATAT PEMBELIAN";
+      evaluationType.innerHTML = "PENJUALAN";
+      sales.style.display = "inline-block";
+      purchase.style.display = "none";
+    }
+  });  
+
+  const date = new Date();
+
+  const months = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const days_name = [
+      "Minggu",
+      "Senin",
+      "Selasa",
+      "Rabu",
+      "Kamis",
+      "Jumat",
+      "Sabtu",
+    ];
+    
+  const renderCalendar = () => {
+    
+    date.setDate(1);
+
+    const lastDay = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
+
+    const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+
+    const firstDayIndex = date.getDay();
+
+    const lastDayIndex = new Date(date.getFullYear(), date.getMonth()+1, 0).getDay();
+
+    document.querySelector(".chosen-month").innerHTML = months[date.getMonth()];
+    document.querySelector(".chosen-year").innerHTML = date.getFullYear();
+
+    let days = "";
+
+    //date of previous month
+    for (let x = firstDayIndex; x>0; x--){
+      date_number = prevLastDay - x + 1;
+      date_id = date_number + 100;
+
+      day = '<div class="prev-date" onclick="chooseDate('+date_id+')"><p class="date-number" id="'+date_id+'">'+date_number+'</p></div>';
+      days += day;
+    }
+
+
+    //date of current month
+    for (let i = 1; i <= lastDay; i++){
+      let salesThisDate = 0;
+
+      if (i === new Date().getDate() &&
+          date.getMonth() === new Date().getMonth() &&
+          date.getFullYear() === new Date().getFullYear()) {
+        day = '<div class="today" onclick="chooseDate('+i+')"><p class="date-number" id="'+i+'">'+i+'</p></div>';
+      } else {
+        day = '<div onclick="chooseDate('+i+')"><p class="date-number" id="'+i+'">'+i+'</p></div>';
+      }
+      days += day;
+    }
+
+    const nextDays = 6 - lastDayIndex;
+
+    //date of next month
+    for (let y = 1; y <= nextDays; y++){
+      date_number = y
+      date_id = date_number + 200;
+
+
+      day = '<div class="next-date" onclick="chooseDate('+date_id+')"><p class="date-number" id="'+date_id+'">'+date_number+'</p></div>';
+      days += day;
+    }
+
+    document.querySelector(".days").innerHTML = days;
+
+  }
+  
+  let dateForSales = null;
+
+  const chooseDate = (id) =>{
+    x = document.getElementById(id).innerHTML;
+    y = document.getElementById(id).parentNode;
+    z = document.querySelector(".clicked-date");
+    if (id > 200) {
+      chosen_date = new Date(date.getFullYear(), date.getMonth()+1, x);
+    } else if (id > 100) {
+      chosen_date = new Date(date.getFullYear(), date.getMonth()-1, x);
+    } else {
+      chosen_date = new Date(date.getFullYear(), date.getMonth(), x);
+    }
+    document.querySelector(".chosen-day").innerHTML = days_name[chosen_date.getDay()]+",";
+    document.querySelector(".chosen-date").innerHTML = chosen_date.getDate() +" "+ months[chosen_date.getMonth()] +" "+ chosen_date.getFullYear();
+    if (z != null) {
+      z.classList.remove("clicked-date");
+    }
+    y.classList.add("clicked-date");
+
+    dateForSales = chosen_date;
+  }
+
+  document.querySelector(".prev").addEventListener("click",() => {
+    date.setMonth(date.getMonth()-1);
+    renderCalendar();
+  });
+
+  document.querySelector(".next").addEventListener("click",() => {
+    date.setMonth(date.getMonth()+1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+  chooseDate(new Date().getDate());
+
+  document.querySelector(".product-sales").style.visibility = "hidden";
+  document.getElementById("nominalPenjualan").disabled = false;
+
+  const chooseInputMethod = (method) => {
+    if(method == "totalPenjualan") {
+      document.querySelector(".product-sales").style.visibility = "hidden";
+      document.getElementById("nominalPenjualan").disabled = false;
+    } else if(method == "penjualanPerProduk") {
+      document.querySelector(".product-sales").style.visibility = "visible";
+      document.getElementById("nominalPenjualan").disabled = true;
+    }
+  };
+
+  document.getElementById("addSalesList").addEventListener("click",() => {
+    salesList = document.getElementById("salesList");
+    last_tr = salesList.lastElementChild;
+    tr_clone = last_tr.cloneNode(true);
+    
+    salesList.append(tr_clone);
+    clean_new_tr(salesList.lastElementChild);
+  });
+
+  document.getElementById("addPurchaseList").addEventListener("click",() => {
+    purchaseList = document.getElementById("purchaseList");
+    last_tr = purchaseList.lastElementChild;
+    tr_clone = last_tr.cloneNode(true);
+    
+    purchaseList.append(tr_clone);
+    clean_new_tr(purchaseList.lastElementChild);
+  });
+
+  const clean_new_tr = (new_tr) =>{
+    let children = new_tr.children;
+    children = Array.isArray(children) ? children : Object.values(children);
+
+    children.forEach(x=>{
+      if(x !== new_tr.lastElementChild) {
+        x.firstElementChild.value = '';
+        x.firstElementChild.style.borderColor = '';
+      }
+    });
+  };
+
+  function removeTableRow(This) {
+    if (This.closest('tbody').childElementCount == 1) {
+      swal("Tabel harus memiliki minimal satu baris");
+    } else {
+      This.closest('tr').remove();
+    }
+  }
+
+  let purchaseDatePicker = document.getElementById("purchase-date");
+  purchaseDatePicker.valueAsDate = new Date();
+  let purchaseDate = purchaseDatePicker.value;
+  let dateForPurchase = new Date(purchaseDate);
+
+  let purchaseDayElem = document.querySelector(".purchase-day");
+  let purchaseDateElem = document.querySelector(".purchase-date");
+  purchaseDayElem.innerHTML = days_name[dateForPurchase.getDay()]+",";
+  purchaseDateElem.innerHTML = dateForPurchase.getDate() +" "+ months[dateForPurchase.getMonth()] +" "+ dateForPurchase.getFullYear();
+
+  purchaseDatePicker.addEventListener("change",() => {
+    purchaseDate = purchaseDatePicker.value;
+    dateForPurchase = new Date(purchaseDate);
+    purchaseDayElem.innerHTML = days_name[dateForPurchase.getDay()]+",";
+    purchaseDateElem.innerHTML = dateForPurchase.getDate() +" "+ months[dateForPurchase.getMonth()] +" "+ dateForPurchase.getFullYear();
+  });
+
+  deletePurchaseElem = document.getElementById("deletePurchase");
+  deletePurchaseElem.addEventListener("click",() => {
+    swal({
+      title: "Apakah anda yakin?",
+      text: "Ini akan menghapus catatan anda pada tanggal tersebut.",
+      icon: "warning",
+      buttons: ["Batal", true],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        swal({
+          title: "Mohon Tunggu...",
+          icon: "info",
+        });
+        btnPurchaseInput.disabled = true;
+        btnPurchaseInput.querySelector("span").innerHTML = "MOHON TUNGGU...";
+        let date = dateForPurchase.getDate();
+        let month = dateForPurchase.getMonth();
+        let year = dateForPurchase.getFullYear();
+        google.script.run.withSuccessHandler(alertInputSuccess).deletePurchase(date,month,year);
+        
+      }
+    });
+  })
+
+  deleteSalesElem = document.getElementById("deleteSales");
+  deleteSalesElem.addEventListener("click",() => {
+    swal({
+      title: "Apakah anda yakin?",
+      text: "Ini akan menghapus catatan anda pada tanggal tersebut.",
+      icon: "warning",
+      buttons: ["Batal", true],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        swal({
+          title: "Mohon Tunggu...",
+          icon: "info",
+        });
+        btnSalesInput.disabled = true;
+        btnSalesInput.querySelector("span").innerHTML = "MOHON TUNGGU...";
+        let date = dateForSales.getDate();
+        let month = dateForSales.getMonth();
+        let year = dateForSales.getFullYear();
+        google.script.run.withSuccessHandler(alertInputSuccess).deleteSales(date,month,year);      
+      }
+    });
+  })
+
+  //input handling
+     
+  let btnSalesInput = document.getElementById("inputSales");
+  let btnPurchaseInput = document.getElementById("inputPurchase");
+  let salesInputTotal = document.getElementById("nominalPenjualan");
+
+
+  let toastProduk = document.querySelector('.produk-toast');
+  let toastKuantitas = document.querySelector('.kuantitas-toast');
+  let toastJumlah = document.querySelector('.jumlah-toast');
+  let toastBundel = document.querySelector('.bundel-toast');
+  let toastBundelReturned = document.querySelector('.bundel-returned-toast');
+  let toastKategori = document.querySelector('.kategori-toast');
+
+
+  btnSalesInput.addEventListener("click",() => {
+
+    //generating id for sales per produk
+
+      let salesItemRows = document.querySelectorAll('input[name="salesItem"]');
+      let salesQuantityRows = document.querySelectorAll('input[name="salesQuantity"]');
+      let salesRows = document.querySelectorAll('input[name="sales"]');
+
+    for (let i = 1; i <= salesItemRows.length; i++) {
+
+      let salesItemRow = salesItemRows[i-1];
+      let salesQuantityRow = salesQuantityRows[i-1];
+      let salesRow = salesRows[i-1];
+
+      salesItemRow.setAttribute("id", "salesItem" + i);
+      salesQuantityRow.setAttribute("id", "salesQuantity" + i);
+      salesRow.setAttribute("id", "sales" + i);
+    };
+
+    //validasi
+    let produkToastBody = toastProduk.querySelector('.toast-body');
+    let kuantitasToastBody = toastKuantitas.querySelector('.toast-body');
+    let pendapatanToastBody = toastJumlah.querySelector('.toast-body');
+    let toastList = {};
+
+    if (salesInputTotal.disabled) {
+      let produkToastSwitch = false;
+      let kuantitasToastSwitch = false;
+      let pendapatanToastSwitch = false;
+      let toastElListArr = [];
+
+      for (let i = 0; i < salesItemRows.length; i++) {
+
+        let idNamaProduk = "salesItem"+(i+1);
+        let idKuantitasProduk = "salesQuantity"+(i+1);
+        let idNominalPenjualan = "sales"+(i+1);
+
+        let produk = document.getElementById(idNamaProduk).value;
+        let kuantitas = document.getElementById(idKuantitasProduk).value;
+        let pendapatan = document.getElementById(idNominalPenjualan).value;
+
+        if (produk == '') {
+          produkToastSwitch = true;
+          produkToastBody.innerHTML = 'Mohon isi nama produk.';
+          document.getElementById(idNamaProduk).style.borderColor = '#dc3545';
+        } else {
+          document.getElementById(idNamaProduk).style.borderColor = '';
+        }
+
+        if (kuantitas == '' || parseFloat(kuantitas) < 0) {
+          kuantitasToastSwitch = true;
+          kuantitasToastBody.innerHTML = 'Mohon isi jumlah kuantitas dengan benar.';
+          document.getElementById(idKuantitasProduk).style.borderColor = '#dc3545';
+        } else {
+          document.getElementById(idKuantitasProduk).style.borderColor = '';
+        }
+
+        if (pendapatan == '' || parseFloat(pendapatan) < 0) {
+          pendapatanToastSwitch = true;
+          pendapatanToastBody.innerHTML = 'Mohon isi nominal penjualan dengan benar.';
+          document.getElementById(idNominalPenjualan).style.borderColor = '#dc3545';
+        } else {
+          document.getElementById(idNominalPenjualan).style.borderColor = '';
+        }
+
+      }
+      
+      if (produkToastSwitch) {
+        toastElListArr.push(toastProduk);
+      }
+
+      if (kuantitasToastSwitch) {
+        toastElListArr.push(toastKuantitas);
+      }
+
+      if (pendapatanToastSwitch) {
+        toastElListArr.push(toastJumlah);
+      }
+
+      let toastElList = [].slice.call(toastElListArr);
+      toastList = toastElList.map(function (toastEl) {
+        return new bootstrap.Toast(toastEl);
+      });
+      
+      toastList.forEach(toast => toast.show());
+
+    } else {
+      if (salesInputTotal.value == '' || parseFloat(salesInputTotal.value) < 0) {
+        pendapatanToastBody.innerHTML = 'Mohon isi nominal penjualan dengan benar.';
+        toastList = new bootstrap.Toast(toastJumlah);
+        toastList.show();
+        salesInputTotal.style.borderColor = '#dc3545';
+      } else {
+        salesInputTotal.style.borderColor = '';
+      }
+    }
+
+    if (Object.keys(toastList).length === 0) {
+      swal({
+        title: "Apakah anda yakin?",
+        text: "Ini akan menghapus catatan lama anda pada tanggal tersebut (bila ada).",
+        icon: "warning",
+        buttons: ["Batal", true],
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal({
+            title: "Mohon Tunggu...",
+            icon: "info",
+          });
+          submitPenjualan();
+        }
+      });
+    }
+ 
+  });
+
+  btnPurchaseInput.addEventListener("click",() => {
+    
+    //generating id for purchase
+
+    let purchaseItemRows = document.querySelectorAll('input[name="purchaseItem"]');
+    let purchaseIsiRows = document.querySelectorAll('input[name="isiPerBundel"]');
+    let purchaseBundelRows = document.querySelectorAll('input[name="jumlahBundel"]');
+    let purchaseBundelReturnedRows = document.querySelectorAll('input[name="jumlahBundelReturned"]');
+    let purchaseRows = document.querySelectorAll('input[name="purchase"]');
+
+    for (let i = 1; i <= purchaseItemRows.length; i++) {
+
+      let purchaseItemRow = purchaseItemRows[i-1];
+      let purchaseIsiRow = purchaseIsiRows[i-1];
+      let purchaseBundelRow = purchaseBundelRows[i-1];
+      let purchaseBundelReturnedRow = purchaseBundelReturnedRows[i-1];
+      let purchaseRow = purchaseRows[i-1];
+
+      purchaseItemRow.setAttribute("id", "purchaseItem" + i);
+      purchaseIsiRow.setAttribute("id", "isiPerBundel" + i);
+      purchaseBundelRow.setAttribute("id", "jumlahBundel" + i);
+      purchaseBundelReturnedRow.setAttribute("id", "jumlahBundelReturned" + i);
+      purchaseRow.setAttribute("id", "purchase" + i);
+    };
+
+    //validasi
+
+    let produkToastBody = toastProduk.querySelector('.toast-body');
+    let kuantitasToastBody = toastKuantitas.querySelector('.toast-body');
+    let bundelToastBody = toastBundel.querySelector('.toast-body');
+    let bundelReturnedToastBody = toastBundelReturned.querySelector('.toast-body');
+    let kategoriToastBody = toastKategori.querySelector('.toast-body');
+    let pembelianToastBody = toastJumlah.querySelector('.toast-body');
+    let toastList = {};
+
+    let kategoriProduk = document.getElementById("purchase-category").value;
+    let kategoriToastSwitch = false;
+
+    if (kategoriProduk == '') {
+      kategoriToastSwitch = true;
+      kategoriToastBody.innerHTML = 'Mohon isi kategori produk.';
+      document.getElementById("purchase-category").style.borderColor = '#dc3545';
+    } else {
+      document.getElementById("purchase-category").style.borderColor = '';
+    }
+
+    let produkToastSwitch = false;
+    let kuantitasToastSwitch = false;
+    let bundelToastSwitch = false;
+    let bundelReturnedToastSwitch = false;
+    let pembelianToastSwitch = false;
+    let toastElListArr = [];
+
+    for (let i = 0; i < purchaseItemRows.length; i++) {
+
+      let idNamaProduk = "purchaseItem"+(i+1);
+      let idIsiPerBundel = "isiPerBundel"+(i+1);
+      let idJumlahBundel = "jumlahBundel"+(i+1);
+      let idJumlahBundelReturned = "jumlahBundelReturned"+(i+1);
+      let idNominalPembelian = "purchase"+(i+1);
+
+      let produk = document.getElementById(idNamaProduk).value;
+      let isiPerBundel = document.getElementById(idIsiPerBundel).value;
+      let jumlahBundel = document.getElementById(idJumlahBundel).value;
+      let jumlahBundelReturned = document.getElementById(idJumlahBundelReturned).value;
+      let pembelian = document.getElementById(idNominalPembelian).value;
+
+      if (produk == '') {
+        produkToastSwitch = true;
+        produkToastBody.innerHTML = 'Mohon isi nama produk.';
+        document.getElementById(idNamaProduk).style.borderColor = '#dc3545';
+      } else {
+        document.getElementById(idNamaProduk).style.borderColor = '';
+      }
+
+      if (isiPerBundel == '' || parseFloat(isiPerBundel) < 0) {
+        kuantitasToastSwitch = true;
+        kuantitasToastBody.innerHTML = 'Mohon masukkan isi bundel dengan benar.';
+        document.getElementById(idIsiPerBundel).style.borderColor = '#dc3545';
+      } else {
+        document.getElementById(idIsiPerBundel).style.borderColor = '';
+      }
+
+      if (jumlahBundel == '' || parseFloat(jumlahBundel) < 0) {
+        bundelToastSwitch = true;
+        bundelToastBody.innerHTML = 'Mohon masukkan jumlah bundel dengan benar.';
+        document.getElementById(idJumlahBundel).style.borderColor = '#dc3545';
+      } else {
+        document.getElementById(idJumlahBundel).style.borderColor = '';
+      }
+
+      if (jumlahBundelReturned < 0 || parseFloat(jumlahBundelReturned) > parseFloat(jumlahBundel)) {
+        bundelReturnedToastSwitch = true;
+        bundelReturnedToastBody.innerHTML = 'Mohon masukkan jumlah bundel yang dikembalikan dengan benar.';
+        document.getElementById(idJumlahBundelReturned).style.borderColor = '#dc3545';
+      } else {
+        document.getElementById(idJumlahBundelReturned).style.borderColor = '';
+      }
+
+      if (parseFloat(pembelian) < 0) {
+        pembelianToastSwitch = true;
+        pembelianToastBody.innerHTML = 'Nominal pembelian tidak boleh negatif';
+        document.getElementById(idNominalPembelian).style.borderColor = '#dc3545';
+      } else {
+        document.getElementById(idNominalPembelian).style.borderColor = '';
+      }
+
+    }
+
+    if (kategoriToastSwitch) {
+      toastElListArr.push(toastKategori);
+    }
+
+    if (produkToastSwitch) {
+      toastElListArr.push(toastProduk);
+    }
+
+    if (kuantitasToastSwitch) {
+      toastElListArr.push(toastKuantitas);
+    }
+
+    if (bundelToastSwitch) {
+      toastElListArr.push(toastBundel);
+    }
+
+    if (bundelReturnedToastSwitch) {
+      toastElListArr.push(toastBundelReturned);
+    }
+
+    if (pembelianToastSwitch) {
+      toastElListArr.push(toastJumlah);
+    }
+
+    let toastElList = [].slice.call(toastElListArr);
+    toastList = toastElList.map(function (toastEl) {
+      return new bootstrap.Toast(toastEl);
+    });
+    
+    toastList.forEach(toast => toast.show());
+
+    if (Object.keys(toastList).length === 0) {
+      swal({
+        title: "Apakah anda yakin?",
+        text: "Ini akan menghapus catatan lama anda pada tanggal tersebut (bila ada).",
+        icon: "warning",
+        buttons: ["Batal", true],
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal({
+            title: "Mohon Tunggu...",
+            icon: "info",
+          });
+          submitPembelian();
+        }
+      });
+    }
+
+  });
+
+  function submitPenjualan() {
+
+    btnSalesInput.disabled = true;
+    btnSalesInput.querySelector("span").innerHTML = "MOHON TUNGGU...";
+    
+    let salesInfo = {};
+    salesInfo.idPenjualan = [];
+    salesInfo.hariPenjualan = [];
+    salesInfo.tanggalPenjualan = [];
+    salesInfo.produk = [];
+    salesInfo.kuantitas = [];
+    salesInfo.pendapatan = [];
+
+    // membuat id dan tanggal
+    let dd = ("0" + dateForSales.getDate()).slice(-2);
+    let mm = ("0" + (dateForSales.getMonth() + 1)).slice(-2);
+    let yyyy = dateForSales.getFullYear();
+
+    //hari dan tanggal
+    let hariPenjualan = days_name[dateForSales.getDay()];
+    let tanggalPenjualan = mm+'/'+dd+'/'+yyyy;
+
+    // perbedaan sales input handling (id, produk, kuantitas, pendapatan)
+
+    let salesItemRows = document.querySelectorAll('input[name="salesItem"]');
+
+    if (salesInputTotal.disabled) {
+      for (let i = 0; i < salesItemRows.length; i++) {
+
+        let idNamaProduk = "salesItem"+(i+1);
+        let idKuantitasProduk = "salesQuantity"+(i+1);
+        let idNominalPenjualan = "sales"+(i+1);
+
+        let idPenjualan = "'"+dd+''+mm+''+yyyy+(i+1);
+        let produk = document.getElementById(idNamaProduk).value;
+        let kuantitas = document.getElementById(idKuantitasProduk).value;
+        let pendapatan = document.getElementById(idNominalPenjualan).value;
+
+        salesInfo.idPenjualan.push(idPenjualan);
+        salesInfo.hariPenjualan.push(hariPenjualan);
+        salesInfo.tanggalPenjualan.push(tanggalPenjualan);
+        salesInfo.produk.push(produk);
+        salesInfo.kuantitas.push(kuantitas);
+        salesInfo.pendapatan.push(pendapatan);
+
+      }
+    } else {
+
+      let idPenjualan = "'"+dd+''+mm+''+yyyy+'0';
+      let produk = "tidak dicantumkan";
+      let kuantitas = 0;
+      let pendapatan = salesInputTotal.value;
+
+      salesInfo.idPenjualan.push(idPenjualan);
+      salesInfo.hariPenjualan.push(hariPenjualan);
+      salesInfo.tanggalPenjualan.push(tanggalPenjualan);
+      salesInfo.produk.push(produk.toLowerCase());
+      salesInfo.kuantitas.push(kuantitas);
+      salesInfo.pendapatan.push(pendapatan); 
+
+    }
+
+    google.script.run.withSuccessHandler(alertInputSuccess).salesSubmit(salesInfo);
+  };
+
+  function submitPembelian() {
+
+    btnPurchaseInput.disabled = true;
+    btnPurchaseInput.querySelector("span").innerHTML = "MOHON TUNGGU...";
+
+    let purchaseInfo = {};
+    purchaseInfo.idPembelian = [];
+    purchaseInfo.tanggalPembelian = [];
+    purchaseInfo.produk = [];
+    purchaseInfo.kategori = [];
+    purchaseInfo.isiPerBundel = [];
+    purchaseInfo.jumlahBundel = [];
+    purchaseInfo.kuantitas = [];
+    purchaseInfo.pengembalian = [];
+    purchaseInfo.jumlahBundelReturned = [];
+    purchaseInfo.pembelian = [];
+
+    purchaseDate = purchaseDatePicker.value;
+    dateForPurchase = new Date(purchaseDate);
+
+    // membuat id dan tanggal
+    let dd = ("0" + dateForPurchase.getDate()).slice(-2);
+    let mm = ("0" + (dateForPurchase.getMonth() + 1)).slice(-2);
+    let yyyy = dateForPurchase.getFullYear();
+
+    //tanggal
+    let tanggalPembelian = mm+'/'+dd+'/'+yyyy;
+
+    //kategori
+    let kategoriProduk = document.getElementById("purchase-category").value;
+
+    let purchaseItemRows = document.querySelectorAll('input[name="purchaseItem"]');
+
+    for (let i = 0; i < purchaseItemRows.length; i++) {
+
+      let idNamaProduk = "purchaseItem"+(i+1);
+      let idIsiPerBundel = "isiPerBundel"+(i+1);
+      let idJumlahBundel = "jumlahBundel"+(i+1);
+      let idJumlahBundelReturned = "jumlahBundelReturned"+(i+1);
+      let idNominalPembelian = "purchase"+(i+1);
+
+      let idPembelian = "'"+dd+''+mm+''+yyyy+(i+1);
+      let produk = document.getElementById(idNamaProduk).value;
+      let isiPerBundel = document.getElementById(idIsiPerBundel).value;
+      let jumlahBundel = document.getElementById(idJumlahBundel).value;
+      let kuantitas =  isiPerBundel*jumlahBundel;
+      let jumlahBundelReturned = document.getElementById(idJumlahBundelReturned).value;
+      let pembelian = 0;
+      if (document.getElementById(idNominalPembelian).value != '') {
+        pembelian = document.getElementById(idNominalPembelian).value;
+      }
+        
+      let pengembalian = '';
+      if (jumlahBundelReturned == null || jumlahBundelReturned == 0) {
+        pengembalian = "Tidak";
+        jumlahBundelReturned = 0;
+      } else {
+        pengembalian = "Ya"
+      };
+
+      purchaseInfo.idPembelian.push(idPembelian);
+      purchaseInfo.tanggalPembelian.push(tanggalPembelian);
+      purchaseInfo.produk.push(produk.toLowerCase());
+      purchaseInfo.kategori.push(kategoriProduk.toLowerCase());
+      purchaseInfo.isiPerBundel.push(isiPerBundel);
+      purchaseInfo.jumlahBundel.push(jumlahBundel);
+      purchaseInfo.kuantitas.push(kuantitas);
+      purchaseInfo.pengembalian.push(pengembalian);
+      purchaseInfo.jumlahBundelReturned.push(jumlahBundelReturned);
+      purchaseInfo.pembelian.push(pembelian);
+
+    };
+    
+    google.script.run.withSuccessHandler(alertInputSuccess).purchaseSubmit(purchaseInfo);
+  };
+
+  function alertInputSuccess(alertSuccess) {
+    if (btnSalesInput.disabled) {
+      btnSalesInput.disabled = false;
+      btnSalesInput.querySelector("span").innerHTML = "SIMPAN CATATAN";
+    } else if (btnPurchaseInput.disabled) {
+      btnPurchaseInput.disabled = false;
+      btnPurchaseInput.querySelector("span").innerHTML = "SIMPAN CATATAN";
+    };
+    swal({
+      title: "Berhasil!",
+      text: alertSuccess,
+      icon: "success",
+    });
+    google.script.run.withSuccessHandler(loadOptionsJs).loadOptions();
+  };
+
+  function loadOptionsJs(listHtml) {
+    document.getElementById("sales-item").innerHTML = listHtml[0];
+    document.getElementById("purchase-item").innerHTML = listHtml[0];
+    document.getElementById("purchase-categories").innerHTML = listHtml[1];
+  }
+
+</script>
