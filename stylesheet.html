@@ -1,0 +1,252 @@
+<style>
+
+body {
+  background-color: url("https://drive.google.com/uc?export=download&id=18BN8_98jmsA5cpQrhDTxjIjDoJngxUS8");
+  font-family: 'Quicksand', sans-serif;
+}
+
+.btn:focus, .btn:active {
+  outline: none !important;
+}
+
+section h1 {
+  color: #612B0D;
+  letter-spacing: 0.2rem;
+  margin-bottom: -0.2rem;
+}
+
+.nav {
+  background-color: #F1A635;
+  height: 40px;
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.4)
+}
+
+.evaluation-type {
+  color: #222227;
+  letter-spacing: 0.4rem;
+  font-size: 3rem;
+  font-family: 'Viga', sans-serif;
+  text-shadow: 0px 3px 3px rgba(0,0,0,0.4);
+}
+
+.tombol {
+  background-color: #F1A635;
+  border: 2px solid #222227;
+  color: #222227;
+  box-shadow: 0px 5px 3px rgba(0,0,0,0.4) !important;
+  font-size: 0.8rem;
+  width: 170px;
+  transition: 0.3s;
+}
+
+.tambah-baris {
+  background-color: white;
+}
+
+.hapus-catatan {
+  background-color: #dc3545;
+}
+
+.tombol:hover {
+  background-color : #222227;
+  color : white;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.8) !important;
+}
+
+.calendar-box {
+  margin: 0;
+  padding: 0;
+  box-sizing:border-box;
+  font-size: 62.5%;
+  color: white;
+  display: flex;
+}
+
+.calendar {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.4);
+}
+
+.month {
+  width: 100%;
+  height: 3rem;
+  background-color: #F1A635;
+}
+
+.month i {
+  font-size: 2rem;
+  cursor: pointer;
+  transition: 0.3s;
+  text-shadow: 0px 3px 3px rgba(0,0,0,0.4);
+}
+
+.month i:hover {
+  color: #612B0D;
+}
+
+.month h1 {
+  font-size: 2rem;
+  letter-spacing: 0.25rem;
+  margin: 5px;
+}
+
+.col-4 .month {
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.4)
+}
+
+.month h2 {
+  font-size: 1.4rem;
+  letter-spacing: 0.1rem;
+  margin: 4px;
+}
+
+.weekdays {
+  width: 100%;
+  height: 1.8rem;
+  background-color: #222227;
+}
+
+.input {
+  color: #222227;
+  font-size: 0.9rem;
+}
+
+.weekdays div {
+  width: calc(100%/7);
+}
+
+.days {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0.2rem;
+  color: #612B0D;
+}
+
+.days div {
+  font-size: 1.5rem;
+  margin: 0.3 rem;
+  width: calc((100%-4.6rem)/7);
+  height: 70px;
+  padding-right: 15px;
+  border: 2px solid white;
+  transition: 0.2s;
+}
+
+.days div:hover:not(.today) {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.days .today:hover {
+  background-color: #ddd;
+  cursor: pointer;
+  color: #612B0D;
+}
+
+.days div p {
+  display: flex;
+  justify-content: center;
+}
+
+.days div .date-number {
+  font-weight: bold;
+}
+
+.prev-date .date-number,
+.next-date .date-number,
+.prev-date .sales,
+.next-date .sales{
+  color: gray;
+  opacity: 50%;
+}
+
+.today {
+  background-color: #222227;
+  color: white;
+}
+
+.days .clicked-date {
+  background-color: #ddd;
+  cursor: pointer;
+  color: #612B0D;
+  border: 2px solid #222227;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.3); /* IE */
+  -moz-transform: scale(1.3); /* FF */
+  -webkit-transform: scale(1.3); /* Safari and Chrome */
+  -o-transform: scale(1.3); /* Opera */
+  transform: scale(1.3);
+  padding: 10px;
+}
+
+.table {
+  table-layout: fixed;
+  width:100%;
+  font-size: 0.8rem;
+  border-color: #222227;
+}
+
+.product-sales {
+  height: 315px;
+  overflow-y: scroll;
+}
+
+.product-purchase {
+  height: 480px;
+  overflow-y: scroll;
+}
+
+thead {
+  background-color: #222227;
+  color: white;
+}
+
+.purchase-header {
+  font-size: 1.2rem;
+  letter-spacing: 0.1rem;
+}
+
+td input {
+  width: 98%;
+}
+
+input {
+  font-size: 1rem;
+}
+
+.fas {
+  cursor: pointer;
+}
+
+#pembelian {
+  display: none;
+}
+
+.sticky-top {
+  z-index: 1;
+}
+
+.toast-container {
+  z-index: 999;
+}
+
+</style>
