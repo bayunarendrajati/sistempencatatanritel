@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <base target="_top">
+    <title>Sistem Pencatatan Toko</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Viga&display=swap" rel="stylesheet">
+    <?!= reference('stylesheet'); ?>
+  </head>
+
+
+  <body class="px-2">
+    
+    <main class="mt-3">
+      <div class="text-center">
+        <h2 class="evaluation-type" id="evaluationType">PENJUALAN</h2>
+        <button type="button" class="btn tombol mt-1" id="switchTypeButton">
+          <span class="fw-bold" id="switchButtonText">CATAT PEMBELIAN</span>
+        </button>
+      </div>
+      
+
+      <!--Penjualan-->
+      <div class="my-4 mx-1" id="penjualan">        
+        <div class="row justify-content-center">
+          <div class="col-5">
+            <div class="calendar-box justify-content-center">
+              <div class="calendar">
+                <div class="month d-flex justify-content-between align-items-center px-5 text-center">
+                  <i class="fas fa-angle-left prev"></i>
+                  <div class="d-flex">
+                    <h1 class="text-uppercase fw-bold chosen-month"></h1>
+                    <h1 class="chosen-year fw-bold"></h1>
+                  </div>
+                  <i class="fas fa-angle-right next"></i>
+                </div>
+                <div class="weekdays d-flex align-items-center">
+                  <div class="fs-6 fw-bold text-center">Minggu</div>
+                  <div class="fs-6 fw-bold text-center">Senin</div>
+                  <div class="fs-6 fw-bold text-center">Selasa</div>
+                  <div class="fs-6 fw-bold text-center">Rabu</div>
+                  <div class="fs-6 fw-bold text-center">Kamis</div>
+                  <div class="fs-6 fw-bold text-center">Jumat</div>
+                  <div class="fs-6 fw-bold text-center">Sabtu</div>
+                </div>
+
+                <div class="days">
+                                                                                                                         
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-7">
+            <div class="calendar-box">
+              <div class="calendar">
+                <div class="month d-flex align-items-center px-3 justify-content-start">
+                  <h2 class="text-uppercase fw-bold chosen-day"></h2>
+                  <h2 class="text-uppercase fw-bold chosen-date"></h2>
+                </div>
+                <form class="p-3 input" autocomplete="off">
+                  <p>Anda dapat memilih untuk mencatat <strong class="text-capitalize">total penjualan</strong> atau <strong class="text-capitalize">penjualan per produk.</strong> </p>
+                  <div>
+                    <input type="radio" id="totalPenjualan" name="salesInputMethod" checked onclick="chooseInputMethod('totalPenjualan')">
+                    <label class="d-inline-block me-3" for="totalPenjualan"><strong>Total Penjualan (Rp)</strong></label>
+                    <input type="number" id="nominalPenjualan" name="totalPenjualan" placeholder="Masukkan nominal..." title="" required>
+                  
+                    <hr>
+
+                    <input type="radio" id="penjualanPerProduk" name="salesInputMethod" onclick="chooseInputMethod('penjualanPerProduk')">
+                    <label for="penjualanPerProduk"><strong>Penjualan Per Produk</strong></label>
+                    <div class="product-sales">
+                      <table class="table table-bordered table-striped align-middle">
+                        <thead class="sticky-top">
+                          <tr>
+                            <th scope="col" style="width: 47%;">Produk</th>
+                            <th scope="col">QTY (Satuan)</th>
+                            <th scope="col" style="width: 25%;">Penjualan (Rp)</th>
+                            <th scope="col" style="width: 8%;"></th>
+                          </tr>
+                        </thead>
+                        <tbody id="salesList">
+                          <tr>
+                            <td>
+                              <input type="text" name="salesItem" list="sales-item">
+                            </td>
+                            <td>
+                              <input type="number" name="salesQuantity">
+                            </td>
+                            <td>
+                              <input type="number" name="sales">                              
+                            </td>
+                            <td class="text-center">
+                              <i class="fas fa-trash" onclick="removeTableRow(this)"></i>
+                            </td>
+                          </tr>
+                          <datalist id="sales-item">
+                            <?!= list; ?>
+                          </datalist>                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="d-inline-block">
+                    <button type="button" class="btn tombol tambah-baris mt-3 me-1" id="addSalesList">
+                      <i class="fas fa-plus"></i>
+                      <span class="fw-bold">TAMBAH BARIS</span>
+                    </button>
+                  </div>
+                  <div class="d-inline-block">
+                    <button type="button" class="btn tombol hapus-catatan mt-3 me-1" id="deleteSales">
+                      <i class="fas fa-trash"></i>
+                      <span class="fw-bold">HAPUS CATATAN</span>
+                    </button>
+                  </div>
+                  <div class="d-inline-block">
+                    <button type="button" class="btn tombol mt-3" id="inputSales">
+                      <i class="fas fa-pencil"></i>
+                      <span class="fw-bold">SIMPAN CATATAN</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Pembelian-->
+      <div class="my-4 mx-1" id="pembelian">
+        <div class="calendar-box justify-content-center">
+          <div class="calendar">
+            <form autocomplete="off">            
+              <div class="month d-flex justify-content-between align-items-center px-5 text-center">
+                <div>
+                  <label for="purchase-date" class="purchase-header m-1 me-3 fw-bold">TGL PEMBELIAN</label>
+                  <input type="date" id="purchase-date" name="purchase-date">
+                </div>
+                <div class="d-flex">
+                  <h2 class="text-uppercase fw-bold purchase-day"></h2>
+                  <h2 class="text-uppercase fw-bold purchase-date"></h2>
+                </div>
+                <div>
+                  <label for="purchase-category" class="purchase-header m-1 me-3 fw-bold">KATEGORI</label>
+                  <input type="text" id="purchase-category" name="purchase-category" list="purchase-categories" placeholder="Tulis kategori...">
+                  <datalist id="purchase-categories">
+                    <?!= kategori; ?>
+                  </datalist> 
+                </div>
+              </div>
+              <div class="p-3 input">
+                <div class="product-purchase">
+                  <table class="table table-bordered table-striped align-middle">
+                    <thead class="sticky-top">
+                      <tr>
+                        <th scope="col" style="width: 46%;">Produk</th>
+                        <th scope="col" style="width: 10%;">Isi per bundel</th>
+                        <th scope="col" style="width: 10%;">Jumlah bundel</th>
+                        <th scope="col" style="width: 19%">Jumlah bundel yang dikembalikan (Opsional)</th>
+                        <th scope="col" style="width: 12%;">Pembelian (Rp)(Opsional)</th>
+                        <th scope="col" style="width: 3%;"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="purchaseList">
+                      <tr>
+                        <td>
+                          <input type="text" name="purchaseItem" list="purchase-item">
+                        </td>
+                        <td>
+                          <input type="number" name="isiPerBundel">
+                        </td>
+                        <td>
+                          <input type="number" name="jumlahBundel">
+                        </td>
+                        <td>
+                          <input type="number" name="jumlahBundelReturned">
+                        </td>
+                        <td>
+                          <input type="number" name="purchase">
+                        </td>
+                        <td class="text-center">
+                          <i class="fas fa-trash" onclick="removeTableRow(this)"></i>
+                        </td>                      
+                      </tr>
+                      <datalist id="purchase-item">
+                        <?!= list; ?>
+                      </datalist>                                                
+                    </tbody>
+                  </table>
+                </div>
+                <div class="d-inline-block">
+                  <button type="button" class="btn tombol tambah-baris mt-3 me-1" id="addPurchaseList">
+                    <i class="fas fa-plus"></i>
+                    <span class="fw-bold">TAMBAH BARIS</span>
+                  </button>
+                </div>
+                <div class="d-inline-block">
+                  <button type="button" class="btn tombol hapus-catatan mt-3 me-1" id="deletePurchase">
+                    <i class="fas fa-trash"></i>
+                    <span class="fw-bold">HAPUS CATATAN</span>
+                  </button>
+                </div>
+                <div class="d-inline-block">
+                  <button type="button" class="btn tombol mt-3" id="inputPurchase">
+                    <i class="fas fa-pencil"></i>
+                    <span class="fw-bold">SIMPAN CATATAN</span>
+                  </button>
+                </div>
+              </div>               
+            </form>
+          </div>
+        </div>
+      </div>
+      <div aria-live="polite" aria-atomic="true" class="position-relative">
+        <!-- Position it: -->
+        <!-- - `.toast-container` for spacing between toasts -->
+        <!-- - `.position-absolute`, `top-0` & `end-0` to position the toasts in the upper right corner -->
+        <!-- - `.p-3` to prevent the toasts from sticking to the edge of the container  -->
+        <div class="toast-container position-fixed top-50 p-3">
+          <div class="toast produk-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="toast kuantitas-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="toast jumlah-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="toast bundel-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="toast bundel-returned-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="toast kategori-toast align-items-center text-white bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body">
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+
+
+
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <?!= reference('script'); ?>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
